@@ -11,8 +11,8 @@ export default function CafePage() {
   const [formData, setFormData] = useState({ name: "", phone: "", message: "" })
   const [formStatus, setFormStatus] = useState({ type: "", message: "" })
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const navRef = useRef(null)
-  const sectionsRef = useRef({})
+  const navRef = useRef<HTMLDivElement>(null)
+  const sectionsRef = useRef<Record<string, HTMLElement | null>>({})
 
   useEffect(() => {
     const handleScroll = () => {
@@ -20,11 +20,11 @@ export default function CafePage() {
       setShowScrollTop(scrollPosition > 400)
       
       Object.entries(sectionsRef.current).forEach(([section, element]) => {
-        if (element) {
-          const { offsetTop, offsetHeight } = element
-          if (scrollPosition >= offsetTop - 100 && scrollPosition < offsetTop + offsetHeight - 100) {
-            setActiveSection(section)
-          }
+        if (!element) return
+        
+        const { offsetTop, offsetHeight } = element
+        if (scrollPosition >= offsetTop - 100 && scrollPosition < offsetTop + offsetHeight - 100) {
+          setActiveSection(section)
         }
       })
     }
@@ -33,7 +33,7 @@ export default function CafePage() {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  const scrollToSection = (sectionId) => {
+  const scrollToSection = (sectionId: string) => {
     setIsMenuOpen(false)
     const element = sectionsRef.current[sectionId]
     if (element) {
@@ -53,7 +53,7 @@ export default function CafePage() {
     return null
   }
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     
     const error = validateForm()
@@ -424,7 +424,7 @@ export default function CafePage() {
                   width="100%"
                   height="100%"
                   style={{ border: 0 }}
-                  allowFullScreen=""
+                  allowFullScreen={true}
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   className="rounded-xl"
